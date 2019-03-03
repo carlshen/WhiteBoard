@@ -1,20 +1,21 @@
 package com.yinghe.testwb;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.yinghe.whiteboardlib.fragment.WhiteBoardFragment;
 
-import java.io.File;
 import java.util.ArrayList;
 
+/**
+ * Created by carl on 19-2-22.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_IMAGE = 2;
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        checkPermissions();
 
         FragmentTransaction ts = getSupportFragmentManager().beginTransaction();
         whiteBoardFragment = WhiteBoardFragment.newInstance();
@@ -68,4 +70,20 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
+
+
+    private void checkPermissions() {
+        boolean cameraEnable = PermissionUtils.permissionChecking(this, Manifest.permission.CAMERA);
+        boolean storageWriteEnable = PermissionUtils.permissionChecking(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        boolean recordAudio = PermissionUtils.permissionChecking(this, Manifest.permission.RECORD_AUDIO);
+        if (!cameraEnable || !storageWriteEnable || !recordAudio) {
+            ActivityCompat.requestPermissions(this,
+                    new String[] {
+                            Manifest.permission.CAMERA,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                            Manifest.permission.RECORD_AUDIO
+                    }, PermissionUtils.REQUEST_CAMERA_PERMISSION);
+        }
+    }
+
 }
